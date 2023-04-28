@@ -6,10 +6,14 @@ import {
   StatusBar,
   TouchableOpacity,
   Dimensions,
-  // Picker,
   Platform,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { Button } from "react-native";
+import * as SMS from "expo-sms";
+import axios from "axios";
+import "react-native-url-polyfill/auto";
+
 const screen = Dimensions.get("window");
 
 const styles = StyleSheet.create({
@@ -86,6 +90,25 @@ const createArray = (length) => {
 const AVAILABLE_MINUTES = createArray(10);
 const AVAILABLE_SECONDS = createArray(60);
 
+const encodedParams = new URLSearchParams();
+encodedParams.set("username", "rahurahuj1teu2023");
+encodedParams.set("password", "ess6252");
+encodedParams.set("from", "SOS");
+encodedParams.set("to", "+919855329220", "+918860868797");
+encodedParams.set("text", "Hello World");
+encodedParams.set("type", "0");
+
+const options = {
+  method: "POST",
+  url: "https://easysendsms.p.rapidapi.com/bulksms",
+  headers: {
+    "content-type": "application/x-www-form-urlencoded",
+    "X-RapidAPI-Key": "47e14575bfmsh42d77666aa596ffp188c74jsn3fad a6585ff7",
+    "X-RapidAPI-Host": "easysendsms.p.rapidapi.com",
+  },
+  data: encodedParams,
+};
+
 export default class App extends React.Component {
   state = {
     remainingSeconds: 5,
@@ -107,6 +130,16 @@ export default class App extends React.Component {
       clearInterval(this.interval);
     }
   }
+
+  sendSMS = async () => {
+    console.log("sending");
+    // try {
+    //   const response = await axios.request(options);
+    //   console.log(response.data);
+    // } catch (error) {
+    //   console.error(error);
+    // }
+  };
 
   start = () => {
     this.setState((state) => ({
@@ -188,6 +221,9 @@ export default class App extends React.Component {
             <Text style={styles.buttonText}>Start</Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity onPress={this.sendSMS} style={styles.button}>
+          <Text style={styles.buttonText}>SOS</Text>
+        </TouchableOpacity>
       </View>
     );
   }
