@@ -36,12 +36,19 @@ const styles = StyleSheet.create({
   buttonStop: {
     borderColor: "#FF851B",
   },
+  buttonSOS: {
+    borderColor: "#D2042D",
+  },
   buttonText: {
     fontSize: 45,
     color: "#89AAFF",
   },
   buttonTextStop: {
     color: "#FF851B",
+  },
+  buttonTextSos: {
+    color: "#D2042D",
+    fontSize: 45,
   },
   timerText: {
     color: "#fff",
@@ -121,6 +128,7 @@ export default class App extends React.Component {
 
   componentDidUpdate(prevProp, prevState) {
     if (this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0) {
+      this.sendSMS();
       this.stop();
     }
   }
@@ -221,8 +229,11 @@ export default class App extends React.Component {
             <Text style={styles.buttonText}>Start</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={this.sendSMS} style={styles.button}>
-          <Text style={styles.buttonText}>SOS</Text>
+        <TouchableOpacity
+          onPress={this.sendSMS}
+          style={[styles.button, styles.buttonSOS]}
+        >
+          <Text style={[styles.buttonTextSos]}>SOS</Text>
         </TouchableOpacity>
       </View>
     );
