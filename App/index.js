@@ -149,6 +149,16 @@ export default class App extends React.Component {
     // }
   };
 
+  getSensorData = async () => {
+    console.log("fetching");
+    const response = await axios.get(
+      "https://api.thingspeak.com/channels/2128513/feeds.json?api_key=PT4BF8G6YFN24YZI&results=1"
+    );
+
+    const data = response.data;
+    console.log(data.feeds[0].field1);
+  };
+
   start = () => {
     this.setState((state) => ({
       remainingSeconds:
@@ -230,7 +240,7 @@ export default class App extends React.Component {
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={this.sendSMS}
+          onPress={this.getSensorData}
           style={[styles.button, styles.buttonSOS]}
         >
           <Text style={[styles.buttonTextSos]}>SOS</Text>
