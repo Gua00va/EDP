@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -122,6 +122,7 @@ export default class App extends React.Component {
     isRunning: false,
     selectedMinutes: "0",
     selectedSeconds: "5",
+    temperature: "0",
   };
 
   interval = null;
@@ -131,6 +132,8 @@ export default class App extends React.Component {
       this.sendSMS();
       this.stop();
     }
+    this.getSensorData();
+    console.log(this.state.temperature);
   }
 
   componentWillUnmount() {
@@ -143,7 +146,7 @@ export default class App extends React.Component {
     console.log("sending");
     // try {
     //   const response = await axios.request(options);
-    //   console.log(response.data);
+    //   console.log(response.data);`
     // } catch (error) {
     //   console.error(error);
     // }
@@ -157,6 +160,9 @@ export default class App extends React.Component {
 
     const data = response.data;
     console.log(data.feeds[0].field1);
+    // setTemp(data.feeds[0].field1);
+    this.state.temperature = data.feeds[0].field1;
+    // return data.feeds[0].field1;
   };
 
   start = () => {
