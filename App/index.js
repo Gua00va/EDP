@@ -55,11 +55,10 @@ const styles = StyleSheet.create({
     fontSize: 90,
   },
   picker: {
-    width: 30,
-    color:"red",
+    width: 50,
     ...Platform.select({
       android: {
-        color: "red",
+        color: "#fff",
         backgroundColor: "#07121B",
         marginLeft: 10,
       },
@@ -69,20 +68,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
   },
-  pickerHeader: {
-    color: "#fff",
-    fontSize: 20,
-    marginLeft:-5,
-  },
   pickerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
   },
-  temperatureContainer: {
-    display: "flex", 
-    marginBottom: 50,
-  }
 });
 
 // 3 => 03, 10 => 10
@@ -138,32 +127,18 @@ export default class App extends React.Component {
 
   interval = null;
 
-  componentDidMount() {
-    try{
-      this.tempInterval = setInterval(() => {
-        this.getSensorData();
-      }, 10000)
-    }
-    catch(err){
-      console.log(err);
-    }
-  }
-
   componentDidUpdate(prevProp, prevState) {
     if (this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0) {
       this.sendSMS();
       this.stop();
     }
-    // this.getSensorData();
-    // console.log(this.state.temperature);
+    this.getSensorData();
+    console.log(this.state.temperature);
   }
 
   componentWillUnmount() {
     if (this.interval) {
       clearInterval(this.interval);
-    }
-    if(this.tempInterval) {
-      clearInterval(this.tempInterval);
     }
   }
 
@@ -186,10 +161,7 @@ export default class App extends React.Component {
     const data = response.data;
     console.log(data.feeds[0].field1);
     // setTemp(data.feeds[0].field1);
-    this.setState((state) => ({
-      temperature: data.feeds[0].field1,
-    }))
-    // this.state.temperature = data.feeds[0].field1;
+    this.state.temperature = data.feeds[0].field1;
     // return data.feeds[0].field1;
   };
 
@@ -206,12 +178,10 @@ export default class App extends React.Component {
         remainingSeconds: state.remainingSeconds - 1,
       }));
     }, 1000);
-
   };
 
   stop = () => {
     clearInterval(this.interval);
-    clearInterval(this.tempInterval);
     this.interval = null;
     this.setState({
       remainingSeconds: 5, // temporary
@@ -220,13 +190,7 @@ export default class App extends React.Component {
   };
 
   renderPickers = () => (
-    <>
-    <View style={styles.temperatureContainer}>
-      {this.state.temperature && <Text style={{ color: '#fff', fontSize:30}}> Temp {this.state.temperature}</Text>}
-      </View>
     <View style={styles.pickerContainer}>
-      
-      <Text style={{ color: '#fff',fontSize:20, }}>{this.state.selectedMinutes}</Text>
       <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
@@ -235,14 +199,12 @@ export default class App extends React.Component {
           this.setState({ selectedMinutes: itemValue });
         }}
         mode="dropdown"
-        showArrow
       >
         {AVAILABLE_MINUTES.map((value) => (
           <Picker.Item key={value} label={value} value={value} />
         ))}
       </Picker>
-      <Text style={styles.pickerHeader}>minutes</Text>
-      <Text style={{ marginLeft:50,color: '#fff',fontSize:20 }}>{this.state.selectedSeconds}</Text>
+      <Text style={styles.pickerItem}>minutes</Text>
       <Picker
         style={styles.picker}
         itemStyle={styles.pickerItem}
@@ -256,9 +218,8 @@ export default class App extends React.Component {
           <Picker.Item key={value} label={value} value={value} />
         ))}
       </Picker>
-      <Text style={styles.pickerHeader}>seconds</Text>
+      <Text style={styles.pickerItem}>seconds</Text>
     </View>
-    </>
   );
 
   render() {
@@ -268,14 +229,7 @@ export default class App extends React.Component {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         {this.state.isRunning ? (
-          <>
-            
-        <View style={styles.temperatureContainer}>
-      {this.state.temperature && <Text style={{ color: '#fff', fontSize:30}}> Temp {this.state.temperature}</Text>}
-      </View>
-      <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
-
-      </>
+          <Text style={styles.timerText}>{`${minutes}:${seconds}`}</Text>
         ) : (
           this.renderPickers()
         )}
@@ -292,7 +246,7 @@ export default class App extends React.Component {
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          onPress={this.sendSMS}
+          onPress={this.getSensorData}
           style={[styles.button, styles.buttonSOS]}
         >
           <Text style={[styles.buttonTextSos]}>SOS</Text>
